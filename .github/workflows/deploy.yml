@@ -1,0 +1,57 @@
+name: Deploy Crustoria Backend
+
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          
+          context: ./backend
+          push: true
+          tags: vinothdilshan/crustoria-backend:latest
+
+  deploy-to-ec2:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to AWS EC2 via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            
+            docker pull vinothdilshan/crustoria-backend:latest
+            
+            
+            docker stop crustoria-backend || true
+            docker rm crustoria-backend || true
+            
+           
+            docker run -d \
+              --name crustoria-backend \
+              -p 5000:5000 \
+              -e MONGO_URI="${{ secrets.MONGO_URI }}" \
+              -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+              vinothdilshan/crustoria-backend:latest
+            
+            
+            docker image prune -f
