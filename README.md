@@ -1,4 +1,4 @@
-# 🍕 Crustoria - Full Stack Pizza Delivery Application
+# 🍕 Crustoria 
 ---
 
 <img width="1738" height="925" alt="Image" src="https://github.com/user-attachments/assets/75a64491-e203-432d-894d-ef50daf80ca4" />
