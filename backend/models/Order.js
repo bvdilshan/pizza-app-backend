@@ -1,10 +1,17 @@
+/**
+ * @file Order.js
+ * @description Order Mongoose Model
+ */
 const mongoose = require('mongoose');
 
+/**
+ * Order Schema
+ */
 const orderSchema = new mongoose.Schema({
-    user: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User', 
-        required: true 
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
     items: [
         {
@@ -17,10 +24,10 @@ const orderSchema = new mongoose.Schema({
     address: { type: String, required: true },
     phone: { type: String, required: true },
     status: {
-    type: String,
-    enum: ['Placed', 'Preparing', 'On the Way', 'Delivered'], 
-    default: 'Placed'
-},
+        type: String,
+        enum: ['Placed', 'Preparing', 'On the Way', 'Delivered'],
+        default: 'Placed'
+    },
     paymentMethod: { type: String, default: 'COD' },
     createdAt: { type: Date, default: Date.now }
 });

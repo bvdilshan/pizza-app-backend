@@ -1,13 +1,17 @@
+/**
+ * @file api.js
+ * @description Axios instance and API service methods
+ */
 import axios from 'axios';
 
 const API = axios.create({
-    
-    baseURL: "/api", 
+
+    baseURL: "/api",
 });
 
 API.interceptors.request.use((req) => {
     const storedUser = localStorage.getItem('user');
-    
+
     if (storedUser) {
         try {
             const user = JSON.parse(storedUser);

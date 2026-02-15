@@ -6,6 +6,8 @@ const router = express.Router();
 router.get('/', menuController.getAllMenuItems);
 
 
-router.post('/add', menuController.addPizza); 
+const upload = require('../utils/fileUpload');
+
+router.post('/add', upload.single('image'), menuController.addPizza);
 router.delete('/:id', menuController.deletePizza);
 module.exports = router;

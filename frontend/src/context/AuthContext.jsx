@@ -1,3 +1,7 @@
+/**
+ * @file AuthContext.jsx
+ * @description Context provider for User Authentication
+ */
 import { createContext, useState, useContext, useEffect } from 'react';
 
 const AuthContext = createContext();

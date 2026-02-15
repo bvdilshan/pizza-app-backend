@@ -1,8 +1,11 @@
-// server.js
+/**
+ * @file server.js
+ * @description Main entry point for the Backend API
+ */
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const connectDB = require('./config/db.js'); 
+const connectDB = require('./config/db.js');
 const authRoutes = require('./routers/authRoutes.js');
 const menuRoutes = require('./routers/menuRoutes.js')
 const orderRoutes = require('./routers/orderRoutes.js');
@@ -13,11 +16,15 @@ connectDB();
 
 const app = express();
 
-// Middleware
+/* ==========================
+   Middleware & Configurations
+   ========================== */
 app.use(express.json());
 app.use(cors());
 app.use('/api/orders', orderRoutes);
-// Routes
+/* ==========================
+   API Routes
+   ========================== */
 app.use('/api/auth', authRoutes);
 app.use('/api/menu', menuRoutes);
 
