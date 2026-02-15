@@ -1,6 +1,7 @@
 
 const Order = require('../models/Order');
 const sendEmail = require('../utils/sendEmail');
+const generateHash = require('../utils/payHere');
 
 /**
  * @desc    Place a new order
@@ -15,7 +16,40 @@ exports.placeOrder = async (req, res) => {
         };
 
         const newOrder = await Order.create(orderData);
-        res.status(201).json({ status: 'success', data: newOrder });
+
+        let payHereData = null;
+
+        // If PayHere, generate hash
+        if (req.body.paymentMethod === 'PayHere') {
+            const merchantId = process.env.PAYHERE_MERCHANT_ID;
+            const currency = 'LKR';
+            const hash = generateHash(newOrder._id.toString(), newOrder.totalAmount, currency);
+
+            payHereData = {
+                merchant_id: merchantId,
+                return_url: `http://localhost:5173/payment/success`,
+                cancel_url: `http://localhost:5173/payment/cancel`,
+                notify_url: `http://localhost:5000/api/orders/notify`,
+                order_id: newOrder._id.toString(),
+                items: "Pizza Order",
+                currency: currency,
+                amount: newOrder.totalAmount.toFixed(2),
+                hash: hash,
+                first_name: req.user ? req.user.name : "Customer",
+                last_name: "",
+                email: req.user ? req.user.email : "customer@example.com",
+                phone: req.user ? req.user.phone : "0000000000",
+                address: req.user ? req.user.address : "Colombo",
+                city: "Colombo",
+                country: "Sri Lanka"
+            };
+        }
+
+        res.status(201).json({
+            status: 'success',
+            data: newOrder,
+            payHereData: payHereData
+        });
     } catch (err) {
         res.status(400).json({ status: 'fail', message: err.message });
     }

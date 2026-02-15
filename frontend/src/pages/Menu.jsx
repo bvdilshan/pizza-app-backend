@@ -17,13 +17,12 @@ const Menu = () => {
         { name: 'Seafood', icon: 'fas fa-fish' },
     ];
 
-    /* Fetch Pizzas from API */
     useEffect(() => {
         const fetchPizzas = async () => {
             try {
                 setLoading(true);
-                const { data } = await API.get('/menu'); 
-                
+                const { data } = await API.get('/menu');
+
                 if (data.status === 'success') {
                     setPizzas(data.data);
                 } else if (Array.isArray(data)) {
@@ -39,7 +38,6 @@ const Menu = () => {
         fetchPizzas();
     }, []);
 
-    /* Add to Cart with Notification */
     const handleAddToCart = (pizza) => {
         addToCart(pizza);
         toast.success(`${pizza.name} added to basket`, {
@@ -48,14 +46,12 @@ const Menu = () => {
         });
     };
 
-    /* Memoized Filter Logic */
     const filteredPizzas = useMemo(() => {
         if (!pizzas) return [];
         if (category === 'All') return pizzas;
         return pizzas.filter(p => p.category?.toLowerCase() === category.toLowerCase());
     }, [category, pizzas]);
 
-    /* Loading State UI */
     if (loading) return (
         <div className="min-h-[60vh] flex flex-col items-center justify-center">
             <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
@@ -65,7 +61,7 @@ const Menu = () => {
 
     return (
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6">
-            
+
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
                 <div>
@@ -74,18 +70,17 @@ const Menu = () => {
                     </h1>
                     <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mt-3">Handcrafted pizzas for every craving</p>
                 </div>
-                
+
                 {/* Mobile Responsive Filter Buttons */}
                 <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
                     {categories.map((cat) => (
                         <button
                             key={cat.name}
                             onClick={() => setCategory(cat.name)}
-                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all whitespace-nowrap border-2 ${
-                                category === cat.name 
-                                ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20 scale-105' 
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all whitespace-nowrap border-2 ${category === cat.name
+                                ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20 scale-105'
                                 : 'bg-white border-gray-100 text-gray-400 hover:border-primary/30 hover:text-primary'
-                            }`}
+                                }`}
                         >
                             <i className={`${cat.icon} text-sm`}></i> {cat.name}
                         </button>
@@ -94,18 +89,18 @@ const Menu = () => {
             </div>
 
             {/* Pizza Grid Layout */}
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
                 {filteredPizzas.length > 0 ? (
                     filteredPizzas.map(pizza => (
                         <div key={pizza._id} className="group bg-white rounded-[2.5rem] p-4 shadow-xl shadow-gray-200/40 border border-gray-50 flex flex-col transition-all duration-500 hover:-translate-y-2">
-                            
+
                             {/* Pizza Image Container */}
                             <div className="relative h-56 rounded-[2rem] overflow-hidden mb-5">
-                                <img 
-                                    src={pizza.image || '/pizzas/default-pizza.jpg'} 
-                                    alt={pizza.name} 
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                                <img
+                                    src={pizza.image || '/pizzas/default-pizza.jpg'}
+                                    alt={pizza.name}
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
                                 <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm">
                                     <span className="text-[10px] font-black text-primary uppercase">{pizza.category}</span>
@@ -121,14 +116,14 @@ const Menu = () => {
                                     {pizza.description}
                                 </p>
                             </div>
-                            
+
                             {/* Price & Action */}
                             <div className="flex justify-between items-center bg-gray-50 p-2 rounded-[1.5rem] mt-6 border border-gray-100 group-hover:bg-primary/5 transition-colors">
                                 <div className="pl-3">
                                     <p className="text-[9px] font-black text-gray-400 uppercase tracking-tighter leading-none">Price</p>
                                     <span className="font-black text-lg text-dark-base italic tracking-tighter">Rs. {pizza.price}</span>
                                 </div>
-                                <button 
+                                <button
                                     onClick={() => handleAddToCart(pizza)}
                                     className="bg-dark-base hover:bg-primary text-white w-12 h-12 rounded-2xl shadow-lg transition-all duration-300 flex items-center justify-center active:scale-90"
                                 >

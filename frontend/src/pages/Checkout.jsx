@@ -10,16 +10,39 @@ const Checkout = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  
+
+  /* Payment Method State */
+  const [paymentMethod, setPaymentMethod] = useState('COD');
+
   const [formData, setFormData] = useState({
     address: user?.address || '',
     phone: user?.phone || ''
   });
 
-  /* Order Placement Logic */
+
+  const handlePayHerePayment = (payHereData) => {
+
+    const form = document.createElement("form");
+    form.setAttribute("method", "POST");
+    form.setAttribute("action", "https://sandbox.payhere.lk/pay/checkout");
+    form.setAttribute("target", "_self");
+
+    Object.keys(payHereData).forEach(key => {
+      const input = document.createElement("input");
+      input.setAttribute("type", "hidden");
+      input.setAttribute("name", key);
+      input.setAttribute("value", payHereData[key]);
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+  };
+
+  /* Order Placement */
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
-    
+
     if (!user || !user._id) {
       toast.error('Session expired. Please login again.');
       return navigate('/login');
@@ -39,17 +62,26 @@ const Checkout = () => {
       })),
       totalAmount: cartTotal,
       address: formData.address,
-      phone: formData.phone
+      phone: formData.phone,
+      paymentMethod: paymentMethod
     };
 
     const loadToast = toast.loading('Processing your order...');
     setLoading(true);
 
     try {
-      await placeOrder(orderData);
-      toast.success('Order Placed Successfully!', { id: loadToast });
-      clearCart();
-      navigate('/orders');
+      const response = await placeOrder(orderData);
+
+      if (paymentMethod === 'PayHere' && response.data.payHereData) {
+        toast.success("Redirecting to PayHere...", { id: loadToast });
+        handlePayHerePayment(response.data.payHereData);
+
+        clearCart();
+      } else {
+        toast.success('Order Placed Successfully!', { id: loadToast });
+        clearCart();
+        navigate('/orders');
+      }
     } catch (err) {
       setLoading(false);
       toast.error(err.response?.data?.message || 'Order failed. Please try again', { id: loadToast });
@@ -67,12 +99,12 @@ const Checkout = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
+
         {/* Order Summary Section */}
         <div className="lg:col-span-5 order-2 lg:order-1">
           <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100">
             <h3 className="text-sm font-black uppercase tracking-widest mb-6 text-gray-400">Items in Bucket</h3>
-            
+
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 mb-8">
               {cartItems.map((item) => (
                 <div key={item._id} className="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100">
@@ -99,18 +131,18 @@ const Checkout = () => {
           <form onSubmit={handlePlaceOrder} className="space-y-6">
             <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100">
               <h3 className="text-sm font-black uppercase tracking-widest mb-6 text-gray-400">Delivery Details</h3>
-              
+
               <div className="grid grid-cols-1 gap-6">
                 {/* Address Field */}
                 <div>
                   <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase mb-3 ml-2">
                     <i className="fas fa-map-marker-alt text-primary"></i> Shipping Address
                   </label>
-                  <textarea 
+                  <textarea
                     className="w-full p-5 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-primary focus:bg-white focus:shadow-inner outline-none transition-all h-32 font-medium text-sm"
                     placeholder="Provide your full street address and city..."
                     value={formData.address}
-                    onChange={(e) => setFormData({...formData, address: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                     required
                   />
                 </div>
@@ -120,20 +152,37 @@ const Checkout = () => {
                   <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase mb-3 ml-2">
                     <i className="fas fa-phone text-primary"></i> Contact Number
                   </label>
-                  <input 
+                  <input
                     type="tel"
                     placeholder="07xxxxxxxx"
                     className="w-full p-5 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-primary focus:bg-white focus:shadow-inner outline-none transition-all font-bold text-sm"
                     value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     required
                   />
                 </div>
               </div>
             </div>
 
+            <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100">
+              <h3 className="text-sm font-black uppercase tracking-widest mb-6 text-gray-400">Payment Method</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <label className={`cursor-pointer p-4 rounded-2xl border-2 flex flex-col items-center justify-center gap-2 transition-all ${paymentMethod === 'COD' ? 'border-primary bg-orange-50/50 text-primary' : 'border-gray-100 bg-gray-50 text-gray-400 hover:border-gray-200'}`}>
+                  <input type="radio" name="payment" className="hidden" value="COD" checked={paymentMethod === 'COD'} onChange={() => setPaymentMethod('COD')} />
+                  <i className="fas fa-money-bill-wave text-2xl"></i>
+                  <span className="text-[10px] font-black uppercase tracking-wider">Cash on Delivery</span>
+                </label>
+
+                <label className={`cursor-pointer p-4 rounded-2xl border-2 flex flex-col items-center justify-center gap-2 transition-all ${paymentMethod === 'PayHere' ? 'border-blue-500 bg-blue-50/50 text-blue-600' : 'border-gray-100 bg-gray-50 text-gray-400 hover:border-gray-200'}`}>
+                  <input type="radio" name="payment" className="hidden" value="PayHere" checked={paymentMethod === 'PayHere'} onChange={() => setPaymentMethod('PayHere')} />
+                  <i className="fas fa-credit-card text-2xl"></i>
+                  <span className="text-[10px] font-black uppercase tracking-wider">PayHere</span>
+                </label>
+              </div>
+            </div>
+
             {/* Action Button */}
-            <button 
+            <button
               type="submit"
               disabled={loading}
               className={`w-full ${loading ? 'bg-gray-400' : 'bg-dark-base hover:bg-primary'} text-white font-black py-5 rounded-[2rem] shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-4 group uppercase tracking-widest text-sm`}
@@ -148,7 +197,7 @@ const Checkout = () => {
               )}
             </button>
           </form>
-          
+
           <p className="text-center text-[10px] text-gray-400 mt-6 font-bold uppercase tracking-widest">
             By placing this order you agree to our terms and conditions
           </p>
