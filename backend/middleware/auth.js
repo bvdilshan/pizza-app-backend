@@ -1,10 +1,11 @@
+/**
+ * @file auth.js
+ * @description Middleware for protecting routes and verifying JWT tokens.
+ */
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const catchAsync = require('../utils/catchAsync');
 
-/**
- * @desc    Middleware to protect routes (verify JWT)
- */
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
   if (req.headers.authorization?.startsWith('Bearer')) {
@@ -22,10 +23,6 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-/**
- * @desc    Middleware to restrict access by role
- * @param   {...String} roles - Allowed roles
- */
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {

@@ -1,6 +1,6 @@
 /**
  * @file AuthContext.jsx
- * @description Context provider for User Authentication
+ * @description Context provider for managing user authentication state.
  */
 import { createContext, useState, useContext, useEffect } from 'react';
 

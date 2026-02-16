@@ -1,12 +1,5 @@
 const crypto = require('crypto');
 
-/**
- * Generate PayHere Hash
- * @param {string} orderId 
- * @param {number} amount 
- * @param {string} currency 
- * @returns {string} MD5 Hash
- */
 const generateHash = (orderId, amount, currency) => {
     const merchantId = process.env.PAYHERE_MERCHANT_ID;
     const merchantSecret = process.env.PAYHERE_SECRET;

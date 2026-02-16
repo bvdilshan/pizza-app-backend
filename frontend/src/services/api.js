@@ -1,6 +1,6 @@
 /**
  * @file api.js
- * @description Axios instance and API service methods
+ * @description Axios instance and API service methods.
  */
 import axios from 'axios';
 

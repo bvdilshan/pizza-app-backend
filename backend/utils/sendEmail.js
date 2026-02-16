@@ -5,13 +5,13 @@ const sendEmail = async (options) => {
     service: 'gmail',
     host: 'smtp.gmail.com',
     port: 587,
-    secure: false, 
+    secure: false,
     auth: {
       user: process.env.EMAIL_USERNAME,
       pass: process.env.EMAIL_PASSWORD
     },
-   
-    connectionTimeout: 15000, 
+
+    connectionTimeout: 15000,
     greetingTimeout: 15000,
     socketTimeout: 15000
   });
@@ -21,7 +21,7 @@ const sendEmail = async (options) => {
     to: options.email,
     subject: options.subject,
     text: options.message,
-    html: options.html 
+    html: options.html
   };
 
   await transporter.sendMail(mailOptions);

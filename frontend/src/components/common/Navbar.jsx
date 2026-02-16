@@ -1,3 +1,7 @@
+/**
+ * @file Navbar.jsx
+ * @description Navigation bar component with cart drawer toggle and user authentication links.
+ */
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
@@ -21,16 +25,14 @@ const Navbar = () => {
   return (
     <>
       <nav className="bg-dark-base text-white px-4 md:px-12 py-4 flex justify-between items-center shadow-2xl sticky top-0 z-50 border-b border-white/5">
-        
-        {/* Mobile Menu Toggle */}
-        <button 
-          className="md:hidden text-2xl p-2" 
+
+        <button
+          className="md:hidden text-2xl p-2"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           <i className={`fas ${isMobileMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
         </button>
 
-        {/* Logo Section */}
         <Link to="/" className="flex items-center gap-2 group">
           <div className="bg-primary p-2 rounded-xl group-hover:rotate-[15deg] transition-transform duration-300">
             <i className="fas fa-pizza-slice text-xl"></i>
@@ -40,23 +42,21 @@ const Navbar = () => {
           </span>
         </Link>
 
-        {/* Desktop Nav Links */}
         <div className="hidden md:flex gap-8 font-poppins text-xs font-black uppercase tracking-widest items-center">
           <Link to="/" className="hover:text-primary transition-colors">Home</Link>
           <Link to="/menu" className="hover:text-primary transition-colors">Menu</Link>
           <Link to="/orders" className="hover:text-primary transition-colors">My Orders</Link>
-          
+
           {user?.role === 'admin' && (
             <Link to="/admin" className="bg-white/10 px-4 py-2 rounded-lg text-primary hover:bg-primary hover:text-white transition-all border border-primary/20">
-               <i className="fas fa-user-shield mr-2"></i>Admin Dashboard
+              <i className="fas fa-user-shield mr-2"></i>Admin Dashboard
             </Link>
           )}
         </div>
 
-        {/* Action Icons */}
         <div className="flex gap-2 md:gap-5 items-center">
-          <button 
-            onClick={() => setIsCartOpen(true)} 
+          <button
+            onClick={() => setIsCartOpen(true)}
             className="relative p-3 hover:bg-white/5 rounded-full transition-all group"
           >
             <i className="fas fa-shopping-basket text-xl group-hover:text-primary"></i>
@@ -66,23 +66,23 @@ const Navbar = () => {
               </span>
             )}
           </button>
-          
+
           {user ? (
             <div className="flex items-center gap-2 md:gap-4 bg-white/5 py-1.5 pl-4 pr-1.5 rounded-2xl border border-white/10">
               <div className="flex flex-col items-end hidden lg:flex">
                 <span className="text-[9px] text-gray-500 font-black uppercase tracking-tighter">Verified User</span>
                 <span className="text-xs font-black text-white leading-tight uppercase tracking-tighter">{user.name}</span>
               </div>
-              <button 
-                onClick={handleLogout} 
+              <button
+                onClick={handleLogout}
                 className="bg-primary hover:bg-white hover:text-primary text-[10px] font-black px-4 py-2 rounded-xl transition-all shadow-xl"
               >
                 <i className="fas fa-sign-out-alt"></i>
               </button>
             </div>
           ) : (
-            <Link 
-              to="/login" 
+            <Link
+              to="/login"
               className="bg-primary hover:bg-white hover:text-primary text-white px-6 py-2.5 rounded-xl font-poppins font-black text-[10px] tracking-widest transition-all shadow-lg uppercase"
             >
               Login
@@ -91,7 +91,6 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay */}
       <div className={`fixed inset-0 bg-dark-base z-[45] transition-transform duration-500 md:hidden ${isMobileMenuOpen ? 'translate-y-0' : '-translate-y-full'}`}>
         <div className="flex flex-col items-center justify-center h-full gap-8 text-2xl font-black uppercase italic text-white">
           <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>

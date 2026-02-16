@@ -1,13 +1,12 @@
-
+/**
+ * @file orderController.js
+ * @description Controller functions for order processing, history, and analytics.
+ */
 const Order = require('../models/Order');
+const User = require('../models/User');
 const sendEmail = require('../utils/sendEmail');
 const generateHash = require('../utils/payHere');
 
-/**
- * @desc    Place a new order
- * @route   POST /api/orders/checkout
- * @access  Private
- */
 exports.placeOrder = async (req, res) => {
     try {
         const orderData = {
@@ -19,7 +18,6 @@ exports.placeOrder = async (req, res) => {
 
         let payHereData = null;
 
-        // If PayHere, generate hash
         if (req.body.paymentMethod === 'PayHere') {
             const merchantId = process.env.PAYHERE_MERCHANT_ID;
             const currency = 'LKR';
@@ -55,11 +53,6 @@ exports.placeOrder = async (req, res) => {
     }
 };
 
-/**
- * @desc    Get logged in user's orders
- * @route   GET /api/orders/my-orders/:userId
- * @access  Private
- */
 exports.getMyOrders = async (req, res) => {
     try {
         const orders = await Order.find({ user: req.params.userId }).sort('-createdAt');
@@ -69,11 +62,6 @@ exports.getMyOrders = async (req, res) => {
     }
 };
 
-/**
- * @desc    Get all orders (Admin)
- * @route   GET /api/orders/all-orders
- * @access  Private (Admin)
- */
 exports.getAllOrders = async (req, res) => {
     try {
         const orders = await Order.find()
@@ -85,11 +73,6 @@ exports.getAllOrders = async (req, res) => {
     }
 };
 
-/**
- * @desc    Update order status
- * @route   PATCH /api/orders/update-status/:id
- * @access  Private (Admin)
- */
 exports.updateOrderStatus = async (req, res) => {
     try {
         const { status } = req.body;
@@ -122,6 +105,63 @@ exports.updateOrderStatus = async (req, res) => {
 
     } catch (err) {
         console.error("Update Status Error:", err.message);
+        res.status(400).json({ status: 'fail', message: err.message });
+    }
+};
+
+exports.getAnalytics = async (req, res) => {
+    try {
+        const totalRevenue = await Order.aggregate([
+            { $match: { status: 'Delivered' } },
+            { $group: { _id: null, total: { $sum: "$totalAmount" } } }
+        ]);
+
+        const totalOrders = await Order.countDocuments();
+        const completedOrders = await Order.countDocuments({ status: 'Delivered' });
+        const pendingOrders = await Order.countDocuments({ status: 'Placed' });
+        const activeUsers = await User.countDocuments({ role: 'customer' });
+
+        const topSelling = await Order.aggregate([
+            { $unwind: "$items" },
+            {
+                $group: {
+                    _id: "$items.pizza",
+                    count: { $sum: "$items.quantity" }
+                }
+            },
+            { $sort: { count: -1 } },
+            { $limit: 5 },
+            {
+                $lookup: {
+                    from: "pizzas",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "pizzaDetails"
+                }
+            },
+            { $unwind: "$pizzaDetails" },
+            {
+                $project: {
+                    name: "$pizzaDetails.name",
+                    count: 1,
+                    image: "$pizzaDetails.image"
+                }
+            }
+        ]);
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                revenue: totalRevenue[0] ? totalRevenue[0].total : 0,
+                totalOrders,
+                completedOrders,
+                pendingOrders,
+                activeUsers,
+                topSelling
+            }
+        });
+
+    } catch (err) {
         res.status(400).json({ status: 'fail', message: err.message });
     }
 };

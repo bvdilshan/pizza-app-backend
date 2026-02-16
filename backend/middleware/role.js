@@ -1,7 +1,11 @@
+/**
+ * @file role.js
+ * @description Middleware for role-based access control.
+ */
 
 exports.restrictTo = (...roles) => {
     return (req, res, next) => {
-        
+
         if (!roles.includes(req.user.role)) {
             return res.status(403).json({
                 status: 'fail',

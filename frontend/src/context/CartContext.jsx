@@ -1,9 +1,13 @@
+/**
+ * @file CartContext.jsx
+ * @description Context provider for managing shopping cart state.
+ */
 import { createContext, useState, useContext, useEffect } from 'react';
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-    
+
     const [cartItems, setCartItems] = useState(() => {
         const savedCart = localStorage.getItem('cart');
         return savedCart ? JSON.parse(savedCart) : [];
@@ -13,7 +17,7 @@ export const CartProvider = ({ children }) => {
         localStorage.setItem('cart', JSON.stringify(cartItems));
     }, [cartItems]);
 
-    
+
     const addToCart = (pizza) => {
         setCartItems((prevItems) => {
             const isItemInCart = prevItems.find((item) => item._id === pizza._id);
@@ -26,7 +30,7 @@ export const CartProvider = ({ children }) => {
         });
     };
 
-    
+
     const removeFromCart = (id) => {
         setCartItems((prevItems) =>
             prevItems.reduce((ack, item) => {

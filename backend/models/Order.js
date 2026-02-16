@@ -1,12 +1,9 @@
 /**
  * @file Order.js
- * @description Order Mongoose Model
+ * @description Mongoose schema for customer orders.
  */
 const mongoose = require('mongoose');
 
-/**
- * Order Schema
- */
 const orderSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -29,6 +26,11 @@ const orderSchema = new mongoose.Schema({
         default: 'Placed'
     },
     paymentMethod: { type: String, default: 'COD' },
+    paymentStatus: {
+        type: String,
+        enum: ['Pending', 'Success', 'Failed'],
+        default: 'Pending'
+    },
     createdAt: { type: Date, default: Date.now }
 });
 

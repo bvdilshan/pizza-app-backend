@@ -4,7 +4,8 @@ const Pizza = require('../models/Pizza');
 const Order = require('../models/Order');
 const User = require('../models/User');
 
-dotenv.config({ path: './.env' });
+const path = require('path');
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const seedData = async () => {
     try {
@@ -12,7 +13,6 @@ const seedData = async () => {
         console.log('MongoDB Connected...');
 
 
-        // 1. Create Pizzas
         const pizzas = [
             {
                 name: 'Margherita',
@@ -20,7 +20,9 @@ const seedData = async () => {
                 price: 1200,
                 size: 'Medium',
                 description: 'Classic delight with 100% real mozzarella cheese.',
-                image: 'https://res.cloudinary.com/demo/image/upload/v1/samples/food/pot-mussels.jpg'
+                image: 'https://res.cloudinary.com/demo/image/upload/v1/samples/food/pot-mussels.jpg',
+                styles: ['Pan Pizza', 'Cheese Lovers'],
+                isCustomizable: true
             },
             {
                 name: 'Chicken Sausage',
@@ -28,7 +30,9 @@ const seedData = async () => {
                 price: 1500,
                 size: 'Medium',
                 description: 'Chicken sausage and cheese.',
-                image: 'https://res.cloudinary.com/demo/image/upload/v1/samples/food/fish-vegetables.jpg'
+                image: 'https://res.cloudinary.com/demo/image/upload/v1/samples/food/fish-vegetables.jpg',
+                styles: ['Thin ‘N Crispy', 'Supreme'],
+                isCustomizable: false
             },
             {
                 name: 'Pepperoni',
@@ -36,14 +40,35 @@ const seedData = async () => {
                 price: 1800,
                 size: 'Medium',
                 description: 'American classic! Spicy pepperoni, chicken and cheese.',
-                image: 'https://res.cloudinary.com/demo/image/upload/v1/samples/food/dessert.jpg'
+                image: 'https://res.cloudinary.com/demo/image/upload/v1/samples/food/dessert.jpg',
+                styles: ['Stuffed Crust', 'Supreme'],
+                isCustomizable: true
+            },
+            {
+                name: 'Veggie Supreme',
+                category: 'Veg',
+                price: 1400,
+                size: 'Medium',
+                description: 'Loaded with fresh vegetables.',
+                image: 'https://res.cloudinary.com/demo/image/upload/v1/samples/food/dessert.jpg',
+                styles: ['Veggie Lovers', 'Pan Pizza'],
+                isCustomizable: true
+            },
+            {
+                name: 'BBQ Chicken Blast',
+                category: 'Chicken',
+                price: 1700,
+                size: 'Large',
+                description: 'Smoky BBQ chicken with onions.',
+                image: 'https://res.cloudinary.com/demo/image/upload/v1/samples/food/dessert.jpg',
+                styles: ['BBQ Chicken', 'Thin ‘N Crispy'],
+                isCustomizable: false
             }
         ];
 
         const createdPizzas = await Pizza.insertMany(pizzas);
         console.log('Pizzas Seeded');
 
-        // 2. Create a Customer User
         let customer = await User.findOne({ email: 'customer@example.com' });
         if (!customer) {
             customer = await User.create({
@@ -57,7 +82,6 @@ const seedData = async () => {
             console.log('Customer User Created');
         }
 
-        // 3. Create Orders
         const orders = [
             {
                 user: customer._id,

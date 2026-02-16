@@ -1,11 +1,10 @@
+/**
+ * @file authController.js
+ * @description Controller functions for user authentication (signup, login, get users).
+ */
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-/**
- * @desc    Register a new user
- * @route   POST /api/auth/signup
- * @access  Public
- */
 exports.signup = async (req, res) => {
     try {
         const newUser = await User.create(req.body);
@@ -15,11 +14,6 @@ exports.signup = async (req, res) => {
     }
 };
 
-/**
- * @desc    Login user & get token
- * @route   POST /api/auth/login
- * @access  Public
- */
 exports.login = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email, password });
@@ -43,4 +37,13 @@ exports.login = async (req, res) => {
             phone: user.phone
         }
     });
+};
+
+exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find();
+        res.status(200).json({ status: 'success', results: users.length, data: users });
+    } catch (err) {
+        res.status(400).json({ status: 'fail', message: err.message });
+    }
 };

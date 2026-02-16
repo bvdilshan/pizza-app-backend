@@ -1,22 +1,32 @@
 import { useEffect, useState } from 'react';
 import API from '../../services/api';
+import DashboardStats from '../../components/admin/DashboardStats';
 
 const AdminDashboard = () => {
-  const [data, setData] = useState({ pizzas: 0, orders: 0, revenue: 0 });
+  const [data, setData] = useState({
+    pizzas: 0,
+    totalOrders: 0,
+    revenue: 0,
+    completedOrders: 0,
+    pendingOrders: 0,
+    activeUsers: 0,
+    topSelling: []
+  });
 
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
         const menuRes = await API.get('/menu');
-        const orderRes = await API.get('/orders/all-orders');
-        
-        const orders = orderRes.data.data || [];
-        const totalRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0);
+        const analyticsRes = await API.get('/orders/analytics');
 
         setData({
           pizzas: (menuRes.data.data || menuRes.data).length,
-          orders: orders.length,
-          revenue: totalRevenue
+          totalOrders: analyticsRes.data.data.totalOrders,
+          revenue: analyticsRes.data.data.revenue,
+          completedOrders: analyticsRes.data.data.completedOrders,
+          pendingOrders: analyticsRes.data.data.pendingOrders,
+          activeUsers: analyticsRes.data.data.activeUsers,
+          topSelling: analyticsRes.data.data.topSelling || []
         });
       } catch (err) {
         console.error("Error loading analysis", err);
@@ -28,32 +38,34 @@ const AdminDashboard = () => {
   return (
     <div className="p-4">
       <h1 className="text-4xl font-black italic mb-10 uppercase tracking-tighter">Business <span className="text-primary text-xl">Analysis</span></h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Total Pizzas */}
-        <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border-l-8 border-primary relative overflow-hidden">
-           <i className="fas fa-pizza-slice absolute -right-4 -bottom-4 text-7xl text-gray-50"></i>
-           <p className="text-gray-400 font-bold uppercase text-xs tracking-widest mb-2">Inventory Size</p>
-           <h2 className="text-5xl font-black">{data.pizzas} <span className="text-lg text-gray-400">Items</span></h2>
+
+      <DashboardStats data={data} />
+
+      <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-sm">
+          <h3 className="text-2xl font-black mb-6 italic uppercase">Top Selling <span className="text-primary">Pizzas</span></h3>
+          <ul className="space-y-4">
+            {data.topSelling.length > 0 ? (
+              data.topSelling.map((item, index) => (
+                <li key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
+                  <div className="flex items-center gap-4">
+                    <span className="font-black text-gray-300 text-xl">#{index + 1}</span>
+                    <img src={item.image} alt={item.name} className="w-12 h-12 rounded-xl object-cover" />
+                    <span className="font-bold">{item.name}</span>
+                  </div>
+                  <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-black">{item.count} Sold</span>
+                </li>
+              ))
+            ) : (
+              <p className="text-gray-400 font-bold">No sales data yet.</p>
+            )}
+          </ul>
         </div>
 
-        {/* Total Orders */}
-        <div className="bg-dark-base text-white p-8 rounded-[2.5rem] shadow-xl relative overflow-hidden">
-           <i className="fas fa-shopping-bag absolute -right-4 -bottom-4 text-7xl text-white/5"></i>
-           <p className="text-gray-400 font-bold uppercase text-xs tracking-widest mb-2">Total Orders</p>
-           <h2 className="text-5xl font-black">{data.orders} <span className="text-lg text-white/40">Sold</span></h2>
+        <div className="bg-white p-10 rounded-[3rem] border border-dashed border-gray-200 text-center flex flex-col items-center justify-center">
+          <i className="fas fa-chart-bar text-4xl text-gray-200 mb-4"></i>
+          <p className="text-gray-400 font-bold">More Charts Coming Soon...</p>
         </div>
-
-        {/* Revenue */}
-        <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border-l-8 border-green-500 relative overflow-hidden">
-           <i className="fas fa-money-bill-wave absolute -right-4 -bottom-4 text-7xl text-gray-50"></i>
-           <p className="text-gray-400 font-bold uppercase text-xs tracking-widest mb-2">Total Revenue</p>
-           <h2 className="text-4xl font-black text-green-600 font-poppins">Rs. {data.revenue.toLocaleString()}</h2>
-        </div>
-      </div>
-
-      <div className="mt-12 bg-white p-10 rounded-[3rem] border border-dashed border-gray-200 text-center">
-          <p className="text-gray-400 font-bold">Sales Graph & Charts Coming Soon...</p>
       </div>
     </div>
   );

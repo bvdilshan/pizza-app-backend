@@ -1,3 +1,7 @@
+/**
+ * @file MyOrders.jsx
+ * @description Page for displaying user's order history and status.
+ */
 import { useEffect, useState } from 'react';
 import { getMyOrders } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -11,7 +15,7 @@ const MyOrders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       if (!user?._id) return;
-      
+
       try {
         setLoading(true);
         const { data } = await getMyOrders(user._id);
@@ -36,8 +40,7 @@ const MyOrders = () => {
 
   return (
     <div className="max-w-6xl mx-auto py-12 px-4 sm:px-6 min-h-screen">
-      
-      {/* Page Header */}
+
       <div className="mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-poppins font-black text-dark-base italic uppercase tracking-tighter">
@@ -69,8 +72,7 @@ const MyOrders = () => {
           {orders.map((order) => (
             <div key={order._id} className="group bg-white p-6 sm:p-8 rounded-[2rem] shadow-xl shadow-gray-200/40 border border-gray-50 hover:border-primary/20 transition-all duration-300">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                
-                {/* Order Identity & Date */}
+
                 <div className="flex items-center gap-5">
                   <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center text-primary border border-gray-100 group-hover:bg-primary group-hover:text-white transition-colors duration-500">
                     <i className="fas fa-receipt text-xl"></i>
@@ -85,19 +87,16 @@ const MyOrders = () => {
                   </div>
                 </div>
 
-                {/* Pricing Details */}
                 <div className="flex flex-col md:items-end">
                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">Amount Paid</p>
                   <p className="text-2xl font-black text-primary italic tracking-tighter leading-none mt-1">Rs. {order.totalAmount.toLocaleString()}</p>
                 </div>
 
-                {/* Status Badge */}
                 <div className="flex items-center gap-4">
-                  <div className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border-2 ${
-                    order.status === 'Delivered' 
-                    ? 'bg-green-50 border-green-100 text-green-600' 
+                  <div className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border-2 ${order.status === 'Delivered'
+                    ? 'bg-green-50 border-green-100 text-green-600'
                     : 'bg-orange-50 border-orange-100 text-orange-600 animate-pulse'
-                  }`}>
+                    }`}>
                     {order.status}
                   </div>
                   <button className="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:bg-dark-base hover:text-white transition-all flex items-center justify-center">

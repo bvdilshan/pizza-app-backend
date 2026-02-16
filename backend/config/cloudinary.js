@@ -1,3 +1,7 @@
+/**
+ * @file cloudinary.js
+ * @description Cloudinary configuration for image uploads.
+ */
 const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({

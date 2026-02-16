@@ -1,3 +1,7 @@
+/**
+ * @file Checkout.jsx
+ * @description Checkout page for order placement and payment processing.
+ */
 import { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -11,7 +15,6 @@ const Checkout = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  /* Payment Method State */
   const [paymentMethod, setPaymentMethod] = useState('COD');
 
   const [formData, setFormData] = useState({
@@ -39,7 +42,6 @@ const Checkout = () => {
     form.submit();
   };
 
-  /* Order Placement */
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
 
@@ -90,7 +92,6 @@ const Checkout = () => {
 
   return (
     <div className="max-w-6xl mx-auto py-12 px-4 sm:px-6 min-h-screen bg-gray-50/30">
-      {/* Page Header */}
       <div className="mb-10">
         <h2 className="text-3xl font-poppins font-black text-dark-base italic uppercase tracking-tighter">
           Finalize <span className="text-primary text-xl">Order</span>
@@ -100,7 +101,6 @@ const Checkout = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-        {/* Order Summary Section */}
         <div className="lg:col-span-5 order-2 lg:order-1">
           <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100">
             <h3 className="text-sm font-black uppercase tracking-widest mb-6 text-gray-400">Items in Bucket</h3>
@@ -126,14 +126,12 @@ const Checkout = () => {
           </div>
         </div>
 
-        {/* Delivery Form Section */}
         <div className="lg:col-span-7 order-1 lg:order-2">
           <form onSubmit={handlePlaceOrder} className="space-y-6">
             <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100">
               <h3 className="text-sm font-black uppercase tracking-widest mb-6 text-gray-400">Delivery Details</h3>
 
               <div className="grid grid-cols-1 gap-6">
-                {/* Address Field */}
                 <div>
                   <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase mb-3 ml-2">
                     <i className="fas fa-map-marker-alt text-primary"></i> Shipping Address
@@ -147,7 +145,6 @@ const Checkout = () => {
                   />
                 </div>
 
-                {/* Phone Field */}
                 <div>
                   <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase mb-3 ml-2">
                     <i className="fas fa-phone text-primary"></i> Contact Number
@@ -181,7 +178,6 @@ const Checkout = () => {
               </div>
             </div>
 
-            {/* Action Button */}
             <button
               type="submit"
               disabled={loading}

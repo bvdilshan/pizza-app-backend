@@ -1,8 +1,13 @@
+/**
+ * @file authRoutes.js
+ * @description API routes for user authentication (signup, login, get users).
+ */
 const express = require('express');
 const authController = require('../controllers/authController');
 const router = express.Router();
 
 router.post('/signup', authController.signup);
 router.post('/login', authController.login);
+router.get('/users', authController.getAllUsers);
 
 module.exports = router;

@@ -1,3 +1,7 @@
+/**
+ * @file main.jsx
+ * @description Main entry point for the React application. Renders the App component wrapped in providers.
+ */
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
@@ -7,9 +11,9 @@ import { AuthProvider } from './context/AuthContext'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
-    <CartProvider>
-      <App />
-    </CartProvider>
+      <CartProvider>
+        <App />
+      </CartProvider>
     </AuthProvider>
   </StrictMode>,
 )

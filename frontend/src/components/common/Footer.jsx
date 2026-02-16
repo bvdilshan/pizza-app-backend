@@ -1,11 +1,14 @@
+/**
+ * @file Footer.jsx
+ * @description Footer component containing links and contact information.
+ */
 import React from 'react';
 
 const Footer = () => {
   return (
     <footer className="bg-dark-base text-gray-400 py-16 px-6 mt-auto border-t border-soft-dark">
       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
-        
-        {/* Brand Section */}
+
         <div className="space-y-4">
           <h3 className="text-white font-poppins text-2xl font-black italic tracking-tighter">
             CRUST<span className="text-primary">ORIA</span>
@@ -15,7 +18,6 @@ const Footer = () => {
           </p>
         </div>
 
-        {/* Quick Links */}
         <div>
           <h3 className="text-white font-poppins text-sm font-bold uppercase tracking-widest mb-6">Quick Links</h3>
           <ul className="space-y-3 text-sm">
@@ -26,7 +28,6 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Categories */}
         <div>
           <h3 className="text-white font-poppins text-sm font-bold uppercase tracking-widest mb-6">Our Menu</h3>
           <ul className="space-y-3 text-sm">
@@ -37,7 +38,6 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Social Section */}
         <div>
           <h3 className="text-white font-poppins text-sm font-bold uppercase tracking-widest mb-6">Connect With Us</h3>
           <div className="flex gap-5">
@@ -59,7 +59,6 @@ const Footer = () => {
 
       </div>
 
-      {/* Bottom Copyright */}
       <div className="max-w-7xl mx-auto text-center mt-16 pt-8 border-t border-soft-dark/50">
         <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-gray-500">
           &copy; 2026 Pizza Hut Sri Lanka. All Rights Reserved. Crafted for excellence.
