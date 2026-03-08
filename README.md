@@ -1,4 +1,4 @@
-﻿# 🍕 Crustoria - Premium Pizza Delivery App
+﻿# 🍕 Crustoria 
 
 Crustoria is a modern, full-stack pizza ordering web application designed to provide a seamless and premium user experience. Built with the latest web technologies, it features a dynamic frontend, a robust backend API, and a comprehensive admin dashboard.
 <img width="1738" height="925" alt="Image" src="https://github.com/user-attachments/assets/75a64491-e203-432d-894d-ef50daf80ca4" />
@@ -137,3 +137,4 @@ Contributions, issues, and feature requests are welcome!
 
 ## 📄 License
 This project is licensed under the ISC License.
+
