@@ -7,11 +7,15 @@ const Pizza = require('../models/Pizza');
 
 exports.addPizza = async (req, res) => {
     try {
-        const pizzaData = {
-            ...req.body,
-            image: req.file ? req.file.path : undefined
-        };
-        const newPizza = await Pizza.create(pizzaData);
+        const imageUrl = req.file ? req.file.location : null;
+        const newPizza = new Pizza({
+            name: req.body.name,
+            description: req.body.description,
+            price: req.body.price,
+            category: req.body.category,
+            image: imageUrl
+        });
+        await newPizza.save();
         res.status(201).json({ status: 'success', data: newPizza });
     } catch (err) {
         res.status(400).json({ status: 'fail', message: err.message });
