@@ -1,7 +1,3 @@
-/**
- * @file s3.js
- * @description AWS S3 configuration and helper setup for fileand image uploads.
- */
 const { S3Client } = require('@aws-sdk/client-s3');
 const s3Client = new S3Client({
     region: process.env.AWS_REGION,

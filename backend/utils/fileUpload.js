@@ -6,7 +6,6 @@ const upload = multer({
     storage: multerS3({
         s3: s3Client,
         bucket: process.env.AWS_S3_BUCKET_NAME,
-       
         metadata: function (req, file, cb) {
             cb(null, {fieldName: file.fieldname});
         },
@@ -17,13 +16,8 @@ const upload = multer({
     }),
     limits: { fileSize: 10 * 1024 * 1024 }, 
     fileFilter: function (req, file, cb) {
-        if (file.mimetype.startsWith('image/')) {
-            cb(null, true);
-        } else {
-            cb(new Error('Only image files are allowed!'), false);
-        }
+        cb(null, true);
     }
-
 });
 
 module.exports = upload;

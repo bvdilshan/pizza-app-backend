@@ -1,9 +1,6 @@
-/**
- * @file authController.js
- * @description Controller functions for user authentication (signup, login, get users).
- */
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 exports.signup = async (req, res) => {
     try {
@@ -16,14 +13,18 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
     const { email, password } = req.body;
-    const user = await User.findOne({ email, password });
+    
+    if (!email || !password) {
+        return res.status(400).json({ status: 'fail', message: 'Please provide email and password' });
+    }
 
-    if (!user) {
+    const user = await User.findOne({ email });
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(401).json({ status: 'fail', message: 'Email or Password incorrect' });
     }
 
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
     res.status(200).json({
         status: 'success',

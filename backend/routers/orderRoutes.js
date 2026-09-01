@@ -1,21 +1,12 @@
-/**
- * @file orderRoutes.js
- * @description API routes for order processing, analytics, and history.
- */
 const express = require('express');
 const orderController = require('../controllers/orderController');
-const { protect } = require('../middleware/auth');
+const { protect, restrictTo } = require('../middleware/authMiddleware');
 const router = express.Router();
 
-
 router.post('/checkout', protect, orderController.placeOrder);
-router.get('/my-orders/:userId', protect, orderController.getMyOrders);
-
-
-router.get('/all-orders', protect, orderController.getAllOrders);
-
-
-router.patch('/update-status/:id', protect, orderController.updateOrderStatus);
-router.get('/analytics', protect, orderController.getAnalytics);
+router.get('/my-orders', protect, orderController.getMyOrders);
+router.get('/all-orders', protect, restrictTo('admin'), orderController.getAllOrders);
+router.patch('/update-status/:id', protect, restrictTo('admin'), orderController.updateOrderStatus);
+router.get('/analytics', protect, restrictTo('admin'), orderController.getAnalytics);
 
 module.exports = router;

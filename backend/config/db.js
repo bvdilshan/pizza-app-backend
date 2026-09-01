@@ -1,7 +1,3 @@
-/**
- * @file db.js
- * @description MongoDB connection configuration using Mongoose.
- */
 require('dotenv').config();
 const mongoose = require('mongoose');
 

@@ -1,23 +1,19 @@
-/**
- * @file server.js
- * @description Main entry point for the backend server. Configures Express, connects to MongoDB, and defines API routes.
- */
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db.js');
 const authRoutes = require('./routers/authRoutes.js');
-const menuRoutes = require('./routers/menuRoutes.js')
+const menuRoutes = require('./routers/menuRoutes.js');
 const orderRoutes = require('./routers/orderRoutes.js');
+
 dotenv.config();
-
-
 connectDB();
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
+
 app.use('/api/orders', orderRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/menu', menuRoutes);
