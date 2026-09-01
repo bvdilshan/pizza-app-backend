@@ -1,7 +1,3 @@
-/**
- * @file Order.js
- * @description Mongoose schema for customer orders.
- */
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({

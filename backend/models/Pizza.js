@@ -1,27 +1,33 @@
-/**
- * @file Pizza.js
- * @description Mongoose schema for Pizza menu items.
- */
 const mongoose = require('mongoose');
 
 const pizzaSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    size: { type: String, enum: ['Small', 'Medium', 'Large'], required: true },
-    price: { type: Number, required: true },
+    name: {
+        type: String,
+        required: [true, 'A pizza must have a name'],
+        trim: true
+    },
+    description: {
+        type: String,
+        required: [true, 'A pizza must have a description']
+    },
+    price: {
+        type: Number,
+        required: [true, 'A pizza must have a price']
+    },
     category: {
         type: String,
-        default: 'Veg',
-        enum: ['Veg', 'Meat', 'Chicken', 'Seafood', 'All']
+        required: [true, 'A pizza must belong to a category']
     },
-    description: String,
-    image: String,
-    isAvailable: { type: Boolean, default: true },
-    styles: {
-        type: [String],
-        enum: ['Pan Pizza', 'Thin ‘N Crispy', 'Stuffed Crust', 'Cheese Lovers', 'Supreme', 'BBQ Chicken', 'Veggie Lovers', 'Hawaiian'],
-        default: []
+    image: {
+        type: String,
+        default: null
     },
-    isCustomizable: { type: Boolean, default: false }
-});
+    isAvailable: {
+        type: Boolean,
+        default: true
+    }
+}, { timestamps: true });
 
-module.exports = mongoose.model('Pizza', pizzaSchema);
+const Pizza = mongoose.model('Pizza', pizzaSchema);
+
+module.exports = Pizza;

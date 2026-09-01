@@ -1,52 +1,19 @@
-/**
- * @file orderController.js
- * @description Controller functions for order processing, history, and analytics.
- */
 const Order = require('../models/Order');
 const User = require('../models/User');
-const sendEmail = require('../utils/sendEmail');
-const generateHash = require('../utils/payHere');
 
 exports.placeOrder = async (req, res) => {
     try {
         const orderData = {
             ...req.body,
-            user: req.user ? req.user.id : req.body.user
+            paymentMethod: 'COD',
+            user: req.user.id
         };
 
         const newOrder = await Order.create(orderData);
 
-        let payHereData = null;
-
-        if (req.body.paymentMethod === 'PayHere') {
-            const merchantId = process.env.PAYHERE_MERCHANT_ID;
-            const currency = 'LKR';
-            const hash = generateHash(newOrder._id.toString(), newOrder.totalAmount, currency);
-
-            payHereData = {
-                merchant_id: merchantId,
-                return_url: `http://localhost:5173/payment/success`,
-                cancel_url: `http://localhost:5173/payment/cancel`,
-                notify_url: `http://localhost:5000/api/orders/notify`,
-                order_id: newOrder._id.toString(),
-                items: "Pizza Order",
-                currency: currency,
-                amount: newOrder.totalAmount.toFixed(2),
-                hash: hash,
-                first_name: req.user ? req.user.name : "Customer",
-                last_name: "",
-                email: req.user ? req.user.email : "customer@example.com",
-                phone: req.user ? req.user.phone : "0000000000",
-                address: req.user ? req.user.address : "Colombo",
-                city: "Colombo",
-                country: "Sri Lanka"
-            };
-        }
-
         res.status(201).json({
             status: 'success',
-            data: newOrder,
-            payHereData: payHereData
+            data: newOrder
         });
     } catch (err) {
         res.status(400).json({ status: 'fail', message: err.message });
@@ -55,7 +22,7 @@ exports.placeOrder = async (req, res) => {
 
 exports.getMyOrders = async (req, res) => {
     try {
-        const orders = await Order.find({ user: req.params.userId }).sort('-createdAt');
+        const orders = await Order.find({ user: req.user.id }).sort('-createdAt');
         res.status(200).json({ status: 'success', data: orders });
     } catch (err) {
         res.status(400).json({ status: 'fail', message: err.message });
@@ -85,26 +52,9 @@ exports.updateOrderStatus = async (req, res) => {
         order.status = status;
         await order.save();
 
-        if (status === 'Delivered' && order.user && order.user.email) {
-            const customerEmail = order.user.email;
-            const customerName = order.user.name;
-
-            sendEmail({
-                email: customerEmail,
-                subject: 'Order Delivered - Pizza Hut ',
-                message: `Hi ${customerName}, your pizza order has been delivered successfully!\n\nOrder ID: #${order._id.toString().slice(-6)}\nTotal Amount: Rs. ${order.totalAmount}\nAddress: ${order.address}`
-            }).then(() => {
-                console.log(`Email sent to Customer: ${customerEmail} `);
-            }).catch(emailErr => {
-                console.error("Email delivery failed background :", emailErr.message);
-            });
-        }
-
-
         res.status(200).json({ status: 'success', data: order });
 
     } catch (err) {
-        console.error("Update Status Error:", err.message);
         res.status(400).json({ status: 'fail', message: err.message });
     }
 };
